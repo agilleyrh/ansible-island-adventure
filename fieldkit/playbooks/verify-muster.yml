@@ -1,0 +1,18 @@
+---
+- name: Check the manifest on the records host
+  hosts: db
+  gather_facts: false
+  tasks:
+    - name: Read the installed file
+      ansible.builtin.slurp:
+        src: /var/tmp/island-review/muster.txt
+      register: manifest
+    - name: Decode the report
+      ansible.builtin.set_fact:
+        report_text: "{{ manifest.content }}"
+    - name: Check all inventory names are present in order
+      ansible.builtin.assert:
+        that: "report_text.splitlines() | map('split', '|') | map('first') | list == (groups['web'] + groups['db']) | unique | sort"
+    - name: Show crew names and fingerprint
+      ansible.builtin.debug:
+        msg: "{{ report_text.splitlines() | map('split', '|') | map('first') | join(',') }}/{{ (report_text | hash('sha256'))[:12] }}"

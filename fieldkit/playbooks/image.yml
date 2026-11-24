@@ -1,0 +1,11 @@
+---
+- name: Identify the local execution image
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Discover the supported image
+      ansible.builtin.import_tasks: tasks/supported-image.yml
+    - name: Show the full tag
+      ansible.builtin.debug:
+        msg: "{{ supported_image }}"

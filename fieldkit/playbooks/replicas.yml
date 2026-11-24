@@ -1,0 +1,48 @@
+---
+- name: Diagnose and repair the harbor beacons
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    replicas: [island-review-b1, island-review-b2, island-review-b3]
+    beacon_state: present
+  tasks:
+    - name: Discover the supported image
+      ansible.builtin.import_tasks: tasks/supported-image.yml
+      tags: always
+    - name: Start all three replicas for the drill
+      ansible.builtin.include_tasks:
+        file: tasks/beacon-containers.yml
+        apply:
+          tags: drill
+      vars:
+        beacon_state: started
+      tags: drill
+    - name: Take one exercise replica offline
+      containers.podman.podman_container:
+        name: "{{ replicas | last }}"
+        state: stopped
+      tags: drill
+    - name: Inspect the replicas before repair
+      containers.podman.podman_container_info:
+        name: "{{ replicas }}"
+      register: inspection
+      tags: repair
+    - name: Report the down replica names
+      ansible.builtin.debug:
+        msg: "{{ inspection.containers | rejectattr('State.Running') | map(attribute='Name') | list }}"
+      tags: repair
+    - name: Apply the desired state
+      ansible.builtin.import_tasks: tasks/beacon-containers.yml
+      tags: repair
+    - name: Verify HTTP from each running replica
+      containers.podman.podman_container_exec:
+        name: "{{ item }}"
+        argv: [python3, -c, "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8080', timeout=3).status)"]
+      register: probe
+      until: probe is succeeded and probe.stdout | trim == '200'
+      retries: 5
+      delay: 1
+      changed_when: false
+      loop: "{{ replicas }}"
+      tags: repair

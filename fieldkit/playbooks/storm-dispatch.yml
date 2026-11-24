@@ -1,0 +1,30 @@
+---
+- name: File a dispatch receipt from the matching EDA event
+  hosts: node03
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Check the event belongs to the harbor exercise
+      ansible.builtin.assert:
+        that:
+          - ansible_eda.event.payload.zone == 'harbor'
+          - ansible_eda.event.payload.wind | int >= 40
+          - ansible_eda.event.payload.station is match('^[a-z][a-z0-9-]{0,24}$')
+          - ansible_eda.event.payload.sequence | int > 0
+    - name: Create the dispatch directory
+      ansible.builtin.file:
+        path: /var/tmp/island-review
+        state: directory
+        mode: "0755"
+    - name: Write the dispatch
+      ansible.builtin.copy:
+        dest: /var/tmp/island-review/dispatch.txt
+        content: "{{ ansible_eda.event.payload.station }}-{{ ansible_eda.event.payload.sequence }}\n"
+        mode: "0644"
+    - name: Read the receipt back from node03
+      ansible.builtin.slurp:
+        src: /var/tmp/island-review/dispatch.txt
+      register: receipt
+    - name: Report the dispatch
+      ansible.builtin.debug:
+        msg: "{{ receipt.content | b64decode | trim }}"

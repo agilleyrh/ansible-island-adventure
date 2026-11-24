@@ -1,6 +1,6 @@
-# Island Adventure challenge catalog
+# Island Adventure review challenges
 
-Each heading gives the challenge ID, points, category, prerequisite IDs and title. Start each terminal exercise in `~/ansible-island-adventure`. The [field guide](field-guide.md) covers the initial setup.
+Run commands from `~/island-review`. Submit each answer on the review board.
 
 ## 1 | 10 | Warm-up | - | Write your name in the sand
 
@@ -10,25 +10,25 @@ The rescue crew needs to recognize you on the scoreboard. Open **Settings** from
 
 Your facilitator has the expedition word. Enter it to open the beach. See **Field guide** in the game menu for the seat setup and repository instructions.
 
-## 23 | 10 | Warm-up | - | Ansible documentation
+## 23 | 10 | Warm-up | - | Read the module manual
 
-Find the Ansible community documentation home page in your browser. Submit its hostname, without a protocol or path.
+Open the installed module help with `ansible-doc ansible.builtin.uri`. Find the Boolean option that makes the HTTP response body available to later tasks even for a successful request. Submit the option name.
 
-## 24 | 10 | Warm-up | - | Ansible collections
+## 24 | 10 | Warm-up | - | Equip the container crew
 
-Find Ansible Galaxy, the community catalog where you can discover collections by namespace. Submit its hostname, without a protocol or path.
+From `~/island-review`, install the bundled collection alongside the playbooks. Run `ansible-galaxy collection install --offline -p fieldkit/playbooks/collections fieldkit/vendor/containers-podman-1.16.3.tar.gz`, then `ansible-galaxy collection list -p fieldkit/playbooks/collections containers.podman`. Submit the installed version number. The warning about the default search path is expected because these playbooks use their adjacent `collections` directory.
 
-## 3 | 10 | At the beach | 17 | Read the beach sign
+## 3 | 10 | At the beach | 17 | Check in from the beach
 
-Open your assigned Showroom seat, select **VS Code** and open a terminal. Run `ansible-navigator --version`. Submit the numeric version, including both dots.
+Run `ansible-navigator --version`. Then run `(cd ~/lab_inventory && ansible all -i hosts -m ansible.builtin.ping -o)`. Confirm all three hosts returned the same ping value. Submit that value, a slash and the numeric Navigator version.
 
-## 4 | 10 | At the beach | 17 | Find the controller version
+## 4 | 10 | At the beach | 17 | Query the controller from a playbook
 
-In Showroom, open **AAP** and sign in with the seat credentials in module 2.1. In the same browser, open `/api/controller/v2/ping/` on the AAP hostname. Read the top-level `version` field. Submit the numeric automation controller version.
+Run `ansible-playbook fieldkit/playbooks/controller-version.yml` from VS Code. At the prompt paste the HTTPS base URL from your assigned AAP tab. Inspect the `uri` task and the field selected from its registered JSON. Submit the controller version it returns.
 
 ## 25 | 10 | At the beach | 3 | Hello, world!
 
-Use the clone you created in **Field guide → Get the field kit**. You can return to it with `cd ~/ansible-island-adventure`. From the repository root, run `ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false`. Submit the single word at the end of the greeting.
+Run `ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false` from your review clone. Submit the single word at the end of the greeting.
 
 ## 26 | 20 | At the beach | 25 | Message in a bottle
 
@@ -48,21 +48,11 @@ Run `fieldkit/playbooks/filter-water.yml` with Navigator in stdout mode and with
 
 ## 34 | 30 | At the beach | 26 | Open the shore chest
 
-Read the treasure role in `fieldkit/roles/treasure/tasks/main.yml`. Run the playbook from the lab inventory directory so Navigator picks up the seat’s SSH settings. The parentheses return you to your clone when the command finishes.
+Read the treasure role and deploy its encrypted page to node01. From your clone run `fieldkit/run-managed treasure-site.yml --vault-password-file ~/island-review/fieldkit/training/treasure-key.txt`. The role reads the installed page over HTTP. Submit its text.
 
-```bash
-(
-  cd ~/lab_inventory && ansible-navigator run ~/ansible-island-adventure/fieldkit/treasure-site.yml -m stdout --ee false \
-    -i hosts --vault-password-file ~/ansible-island-adventure/fieldkit/training/treasure-key.txt
-)
-curl -fsS http://node01/island-workshop.txt
-```
+## 35 | 10 | At the beach | 3,24 | Inspect the execution image
 
-Submit the text served by the page. The final playbook task also prints it.
-
-## 35 | 10 | At the beach | 3 | Read the mark on the ball
-
-In the VS Code terminal, list local execution images with `podman images --format '{{.Repository}}:{{.Tag}}'`. Find the image that includes `ee-supported`. Submit the final repository component, without the registry path or tag.
+Run `ansible-playbook fieldkit/playbooks/image.yml` in the VS Code terminal. Inspect `fieldkit/playbooks/tasks/supported-image.yml` to see how `podman_image_info` selects the supported execution environment. Submit the last component of the image repository, omitting its tag.
 
 ## 36 | 10 | At the beach | 3 | Find the oasis
 
@@ -82,97 +72,71 @@ Under **Automation Execution → Infrastructure → Credentials**, create a **Va
 
 ## 30 | 30 | Controller treasure hunt | 29 | Raise the treasure chest
 
-Create a job template for `fieldkit/treasure-site.yml`. Select **Workshop Inventory**, **Workshop Credential** (Machine) and your Vault credential. Enable **Privilege Escalation**. Leave **Variables** empty and launch the job. From VS Code, run `curl -fsS http://node01/island-workshop.txt`. Submit the page text printed by the HTTP check or by curl.
+Create a controller job template for `fieldkit/treasure-site.yml` with **Workshop Inventory**, **Workshop Credential** and your training Vault credential. Enable **Privilege Escalation**, leave **Variables** empty and launch it. Inspect the task that reads the deployed page from node01 over HTTP. Submit the page text.
 
-## 101 | 10 | Coastal field station | 25 | Start the hello service
+## 101 | 10 | Coastal field station | 25 | Open the coastal station
 
-Follow **Coastal field station** in `fieldkit/README.md` to start a personal HTTP service and set `COAST` in the current terminal. Request `curl -fsS "$COAST/"`. Submit the greeting, including the underscores.
+Run `fieldkit/run-managed station.yml --limit node01`. Follow the role from package installation to the final HTTP read-back. Confirm the URL on node01 is serving the new station and submit its greeting.
 
 ## 5 | 15 | Coastal field station | 101 | The French connection
 
-Open `fieldkit/data/station.json`. Decode `encoded_french` from Base64 and place the decoded text in the `french` field. Request `"$COAST/bonjour"` with curl and submit the response. The service reloads the file on each request.
+Inspect `fieldkit/data/station.json`. Edit the station role’s `templates/bonjour.txt.j2` to decode the supplied French greeting with a Jinja filter. Deploy again with `fieldkit/run-managed station.yml --limit node01`. Run `fieldkit/run-managed playbooks/greetings.yml --limit node01 -e message_name=bonjour` and submit the text from the live page.
 
 ## 6 | 30 | Coastal field station | 101 | Morse coding
 
-At dusk, the lighthouse transmits a string of dots and dashes. Fetch `"$COAST/morse"` and inspect the letter-to-code dictionary in `fieldkit/data/morse.json`. Follow **Receive a signal** in `fieldkit/README.md` to start your personal receiving API.
-
-Implement `decode_morse(message, alphabet)` in `fieldkit/decoders.py`. Spaces separate letters. Replay the transmission with `python3 fieldkit/replay.py morse`. It sends a JSON message to your `POST /decode-morse` endpoint. Submit the word your receiver returns.
+Start the supplied radio receiver in a second terminal with `cd ~/island-review && python3 fieldkit/receiver.py`. Leave it running for both signal exercises. In `fieldkit/playbooks/signals.yml`, edit **Assemble the Morse message**. Split the recorded signal into codes, look up each code in the supplied `letters` dictionary, and join the results. Run `ansible-playbook fieldkit/playbooks/signals.yml --tags morse -e signal=morse`. The play fetches the live station report and POSTs your translation. Submit the acknowledged word. Hint: Ansible’s `extract` filter can look up a list of keys.
 
 ## 7 | 30 | Coastal field station | 101 | Bottles on the grid
 
-Request `"$COAST/bottles"`. Each record contains a character and integer coordinates. Start your receiving API as described under **Receive a signal** in `fieldkit/README.md`.
+In `fieldkit/playbooks/signals.yml`, edit **Read the bottles in chart order**. Sort rows by increasing `coordinates.y` and columns by increasing `coordinates.x`, then join their characters. With your radio receiver running, execute `ansible-playbook fieldkit/playbooks/signals.yml --tags bottles -e signal=bottles`. Submit the island name acknowledged by the receiver. Hint: Jinja sorts are stable, so sort the secondary key first. Stop the receiver when both signals are acknowledged.
 
-Implement `collect_bottles(bottles)` in `fieldkit/decoders.py`. Read rows in ascending `y` order and columns in ascending `x` order. Run `python3 fieldkit/replay.py bottles`. It posts the recorded list to `/collect-bottles`. Submit the island name returned by your service.
+## 8 | 10 | Coastal field station | 101 | Publish the runtime label
 
-## 8 | 10 | Coastal field station | 25 | Native Java
+In `fieldkit/playbooks/shore-assets.yml`, adjust the runtime expression to select the `native-java` Template and read `annotations.runtime`. Deploy with `fieldkit/run-managed playbooks/shore-assets.yml --tags runtime`. Submit the value retrieved from the published HTTP label.
 
-The shore crew saved a small catalog in `fieldkit/data/shore.json`. Find the object whose kind is `Template` and whose name is `native-java`. Submit the Java runtime in its `annotations.runtime` field.
+## 10 | 20 | Coastal field station | 35 | Monkey business
 
-## 10 | 20 | Coastal field station | 25,35 | Monkey business
+Three rootless HTTP beacons should be running in VS Code. Run `ansible-playbook fieldkit/playbooks/replicas.yml --tags drill` once to create the rehearsal fault. In the same playbook, set `beacon_state` to the state that starts a stopped container. Run `ansible-playbook fieldkit/playbooks/replicas.yml --tags repair`. Identify the down replica from the inspection **before** repair. Check all three HTTP probes and repeat the repair to confirm `changed=0`. Submit the name of the replica you recovered.
 
-A chaos monkey has taken a beacon offline. Find the desired replica count for the `beacon` Deployment in `fieldkit/data/shore.json`. Use the supported execution image already on your seat. Start three HTTP replicas, then take the third one offline.
+## 11 | 20 | Coastal field station | 5 | Aloha!
 
-```bash
-EE=$(podman images --format '{{.Repository}}:{{.Tag}}' | awk '/\/ee-supported/ {print; exit}')
-for n in 1 2 3; do
-  podman run -d --label island.beacon=workshop --name "island-beacon-$n" --entrypoint python3 "$EE" -m http.server 8080
-done
-podman stop island-beacon-3
-podman ps --filter label=island.beacon=workshop --format '{{.Names}}'
-podman exec island-beacon-1 python3 -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8080').status)"
-```
+Personalize the station role’s `templates/aloha.txt.j2` so the page contains `inventory_hostname`, an equals sign and the supplied `island_greeting`. Run `fieldkit/run-managed station.yml` on both web hosts, then `fieldkit/run-managed playbooks/greetings.yml -e message_name=aloha`. Submit both HTTP responses in inventory-name order, separated by a comma.
 
-Use the number of running containers and the manifest's desired count to calculate how many replacements are needed. Submit an integer. When finished, remove only these three exercise replicas with `podman rm -f island-beacon-1 island-beacon-2 island-beacon-3`.
+## 12 | 15 | Coastal field station | 101 | Treasure map
 
-## 11 | 20 | Coastal field station | 101 | Aloha!
+The map in the archived ConfigMap is encoded. Edit **Extract the treasure map** in `fieldkit/playbooks/shore-assets.yml` to decode its data using Ansible. Run `fieldkit/run-managed playbooks/shore-assets.yml --tags map`. Submit the text retrieved from the deployed map.
 
-Add an entry to the `aliases` object in `fieldkit/data/station.json`. Use `/aloha` as the path and copy the value of `island_greeting` into it. Request `"$COAST/aloha"` and submit the response.
+## 15 | 30 | Crew muster | 36 | Muster the crew
 
-## 12 | 15 | Coastal field station | 25 | Treasure map
+Read `fieldkit/playbooks/muster.yml` and its template `fieldkit/templates/muster.txt.j2`. The starter template only visits the web group. Change the loop to visit both `web` and `db`, take unique names and sort them. Run `fieldkit/run-managed playbooks/muster.yml`. The play gathers live OS facts and renders the manifest on node03. Inspect it with `(cd ~/lab_inventory && ansible db -i hosts -m ansible.builtin.command -a 'cat /var/tmp/island-review/muster.txt')`. Submit the hostnames in file order, comma-separated.
 
-Find the `treasure-map` ConfigMap in `fieldkit/data/shore.json`. Decode the value of `data.map` from Base64. Submit the resulting phrase, keeping the hyphens.
+## 16 | 20 | Crew muster | 15 | Verify the ship's manifest
 
-## 15 | 30 | Explorer records | 25 | Top explorer
-
-The survivors recorded their skills in `fieldkit/data/explorers.sql`. Run a SQL query with `python3 fieldkit/explorer.py "SELECT ..."`. Join the explorer and assessment tables, sum each person's scores and find the highest total. Submit that explorer's name.
-
-## 16 | 20 | Explorer records | 15 | Read the final journal entry
-
-Use the same query runner and the `journal` table. Find the most skilled explorer's most recent entry by timestamp. Submit the entire entry, including punctuation.
+Edit **Decode the report** in `fieldkit/playbooks/verify-muster.yml` to decode the remote file returned by `slurp`. Run `fieldkit/run-managed playbooks/verify-muster.yml`. The assertion checks the complete inventory order before printing a fingerprint. Submit the 12-character SHA-256 prefix after the slash. Preserve the template’s final newline.
 
 ## 18 | 25 | Coastal field station | 35 | Persistence pays off
 
-From the repository root, use the local supported execution image to create a named Podman volume. The first disposable container writes the key. A second container reads it after the first exits.
+Edit `reader_mount` in `fieldkit/playbooks/locker.yml`. Mount the same named volume used by the writer at the reader’s `/locker` path and keep its SELinux `:Z` suffix. Run `ansible-playbook fieldkit/playbooks/locker.yml`. The writer is removed before the reader starts. Submit the key the reader recovers. The play cleans up the volume and both containers.
 
-```bash
-EE=$(podman images --format '{{.Repository}}:{{.Tag}}' | awk '/\/ee-supported/ {print; exit}')
-podman volume create island-locker
-podman run --rm -i --user 0 -v island-locker:/locker:Z --entrypoint sh "$EE" \
-  -c 'cat > /locker/mykey.txt' < fieldkit/data/locker.txt
-podman run --rm --user 0 -v island-locker:/locker:Z --entrypoint cat "$EE" /locker/mykey.txt
-```
+## 19 | 20 | Navigation and rollout | 101 | Mapster peers
 
-Submit the text exactly as stored. After submitting, you can remove your own volume with `podman volume rm island-locker`.
+Edit the debug expression in `fieldkit/playbooks/peers.yml`. Filter the registered survey records to peers whose `state` is `connected`, turn the result into a list and count it. Run `ansible-playbook fieldkit/playbooks/peers.yml`. Submit the integer.
 
-## 19 | 20 | Navigator's charts | 101 | Mapster peers
+## 20 | 15 | Navigation and rollout | 19 | Scrambled islands
 
-The field station replays a recorded Mapster survey so each seat receives the same chart. Request `"$COAST/peers"`. Count only entries whose state is `connected`. Submit an integer.
+Take a puzzle break. Open `fieldkit/data/chart.json`, find the four single-letter `tiles`, and rearrange them to name a vessel. Submit the word.
 
-## 20 | 15 | Navigator's charts | 19 | Scrambled islands
+## 21 | 20 | Navigation and rollout | 11 | Roll out the green beacon
 
-Fetch `/island/1`, `/island/2`, `/island/3` and `/island/4` from your field station. Each tile contains a letter. Rearrange all four letters to name a vessel. Submit the word.
+The launch crew needs one healthy web host during each update. In `fieldkit/playbooks/rollout.yml`, set the batch size so only one host changes at a time. Run `fieldkit/run-managed playbooks/rollout.yml`. Check that the first HTTP health check finishes before the second host updates. Repeat and confirm no changes. Submit both live release markers in inventory-name order, comma-separated.
 
-## 21 | 20 | Navigator's charts | 19 | Island hopping
+## 22 | 40 | Navigation and rollout | 21 | Recover the rejected release
 
-Request `"$COAST/maps"`. Each entry is an ordered pair of Cartesian coordinates in kilometers. Find the straight-line distance between the first two entries. Round once to the nearest kilometer and submit the integer.
+Open `fieldkit/playbooks/recover.yml`. A deliberately bad candidate is written to a dedicated practice page on node02. In the `rescue` block, restore the decoded bytes read from the known-good release. Run `fieldkit/run-managed playbooks/recover.yml`. Expect one rescued failure and a successful final health check. Submit the complete `restored/…` result.
 
-## 22 | 40 | Navigator's charts | 21 | The traveling sailor
+## 100 | 10 | Crew muster | 36 | Check the RHEL fleet
 
-Use the same coordinates. Find the shortest open trip that visits every island exactly once. You may start and finish anywhere. Sum unrounded straight-line leg lengths, then round the shortest total to the nearest kilometer. Submit that integer.
-
-## 100 | 10 | Coastal field station | 25 | Kubernetes version
-
-The facilitator saved the game cluster's Kubernetes API version in `fieldkit/data/platform.json`. Read its `gitVersion` field. Submit it exactly, including the leading `v`.
+Run `fieldkit/run-managed playbooks/muster.yml --tags facts`. Check that the distribution assertion passes on all three nodes. Submit the common `distribution/major-version` signature printed by the play.
 
 ## 38 | 35 | Rescue operations | 37 | Reconcile the relief manifest
 
@@ -189,7 +153,7 @@ Preview the change on **node02**, apply it, then apply it again to check idempot
 ```bash
 (
   cd ~/lab_inventory || exit
-  playbook=~/ansible-island-adventure/fieldkit/playbooks/beacon-config.yml
+  playbook=~/island-review/fieldkit/playbooks/beacon-config.yml
   ansible-playbook -i hosts "$playbook" --check --diff &&
     ansible-playbook -i hosts "$playbook" &&
     ansible-playbook -i hosts "$playbook"
@@ -216,8 +180,6 @@ Create the EDA project and tide activation using **Field guide → Event-Driven 
 
 Start the activation. The source sends nine samples and then finishes. In **Rule Audit**, open your activation's **Record a navigable tide** entries. Inspect the matching event's `i` field or the activation output. Which sample numbers passed the condition? Submit them in ascending order, separated by commas. A completed finite activation is the expected outcome.
 
-## 43 | 50 | Event-Driven Ansible | 42 | Relay the storm warning
+## 43 | 50 | Event-Driven Ansible | 42,28 | Dispatch the harbor launch
 
-Follow **Field guide → Send an authenticated storm report** to create an event-stream credential and event stream for your seat. Create an activation for `storm-relay.yml`. Connect its `station_reports` source to your stream. Enable it and wait for **Running**.
-
-From VS Code, send the quiet, offshore and alert JSON files once each, in that order. Inspect your stream's received-event count and the **Dispatch the harbor launch** entry in **Rule Audit**. Identify the station and sequence from the event that triggered dispatch. Submit the dispatch identifier as `station-sequence`. Disable this activation after you collect the evidence.
+Follow **Field guide → Send an authenticated storm report** to create your dispatch job, EDA launch credential, token-protected event stream and mapped activation. Send the three recorded reports with the supplied Ansible playbook. In Rule Audit, find the one matching event. Check the controller job’s event variables and successful output. From VS Code, read the independent receipt with `(cd ~/lab_inventory && ansible node03 -i hosts -m ansible.builtin.command -a 'cat /var/tmp/island-review/dispatch.txt')`. Submit the receipt and disable your activation.

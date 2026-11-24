@@ -1,0 +1,26 @@
+---
+- name: Roll out the green beacon release
+  hosts: web
+  become: true
+  gather_facts: false
+  serial: 2
+  tasks:
+    - name: Verify a single-host batch
+      ansible.builtin.assert:
+        that: ansible_play_batch | length == 1
+    - name: Install the release marker
+      ansible.builtin.copy:
+        dest: /var/www/html/island-review/release.txt
+        content: "{{ inventory_hostname }}=green\n"
+        mode: "0644"
+    - name: Read back this host's release before continuing
+      ansible.builtin.uri:
+        url: http://127.0.0.1/island-review/release.txt
+        return_content: true
+      register: release
+    - name: Check the release
+      ansible.builtin.assert:
+        that: release.content | trim == inventory_hostname ~ '=green'
+    - name: Report the deployed release
+      ansible.builtin.debug:
+        msg: "{{ release.content | trim }}"

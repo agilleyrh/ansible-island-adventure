@@ -1,0 +1,45 @@
+---
+- name: Install the web service
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+
+- name: Start the web service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+
+- name: Create the workshop document root
+  ansible.builtin.file:
+    path: /var/www/html/island-review
+    state: directory
+    mode: "0755"
+
+- name: Publish the station greeting
+  ansible.builtin.copy:
+    dest: /var/www/html/island-review/index.txt
+    content: "{{ greeting }}\n"
+    mode: "0644"
+
+- name: Render the two station messages
+  ansible.builtin.template:
+    src: "{{ item }}.txt.j2"
+    dest: "/var/www/html/island-review/{{ item }}.txt"
+    mode: "0644"
+  loop: [bonjour, aloha]
+
+- name: Publish the survey used by the radio crew
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/data/chart.json"
+    dest: /var/www/html/island-review/chart.json
+    mode: "0644"
+
+- name: Read back the station greeting over HTTP
+  ansible.builtin.uri:
+    url: http://127.0.0.1/island-review/index.txt
+    return_content: true
+  register: station_page
+
+- name: Report the greeting
+  ansible.builtin.debug:
+    msg: "{{ station_page.content | trim }}"

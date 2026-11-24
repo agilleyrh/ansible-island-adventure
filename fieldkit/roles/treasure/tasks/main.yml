@@ -15,7 +15,6 @@
   ansible.builtin.service:
     name: httpd
     state: started
-    enabled: true
 - name: Write this seat's page
   ansible.builtin.copy:
     dest: "/var/www/html/island-{{ island_seat }}.txt"

@@ -1,0 +1,65 @@
+---
+- name: Recover cargo from a persistent Podman volume
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    locker: island-review-locker
+    reader_mount: "{{ locker }}:/spare:Z"
+  tasks:
+    - name: Discover the supported image
+      ansible.builtin.import_tasks: tasks/supported-image.yml
+    - name: Create the locker
+      containers.podman.podman_volume:
+        name: "{{ locker }}"
+    - name: Write cargo and recover it with a different container
+      block:
+        - name: Start the writer
+          containers.podman.podman_container:
+            name: island-review-writer
+            image: "{{ supported_image }}"
+            entrypoint: sleep
+            command: "300"
+            user: "0"
+            volume: ["{{ locker }}:/locker:Z"]
+            state: started
+        - name: Store the manifest key
+          containers.podman.podman_container_exec:
+            name: island-review-writer
+            argv: [sh, -c, 'printf "%s\n" "$CARGO" > /locker/key.txt']
+            env:
+              CARGO: "{{ lookup('ansible.builtin.file', playbook_dir + '/../data/locker.txt') }}"
+        - name: Remove the writer
+          containers.podman.podman_container:
+            name: island-review-writer
+            state: absent
+            force_delete: true
+        - name: Start the reader with the recovered mount
+          containers.podman.podman_container:
+            name: island-review-reader
+            image: "{{ supported_image }}"
+            entrypoint: sleep
+            command: "300"
+            user: "0"
+            volume: ["{{ reader_mount }}"]
+            state: started
+        - name: Read the cargo from the second container
+          containers.podman.podman_container_exec:
+            name: island-review-reader
+            argv: [cat, /locker/key.txt]
+          register: cargo
+          changed_when: false
+        - name: Report the recovered key
+          ansible.builtin.debug:
+            msg: "{{ cargo.stdout | trim }}"
+      always:
+        - name: Remove the two exercise containers
+          containers.podman.podman_container:
+            name: "{{ item }}"
+            state: absent
+            force_delete: true
+          loop: [island-review-reader, island-review-writer]
+        - name: Remove the exercise volume
+          containers.podman.podman_volume:
+            name: "{{ locker }}"
+            state: absent

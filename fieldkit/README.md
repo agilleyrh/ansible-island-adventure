@@ -1,33 +1,22 @@
-# Island field kit
+# Island review field kit
 
-Open your Showroom VS Code terminal and follow the [field guide](../workshop/field-guide.md#get-the-field-kit) to clone the repository. Run the commands below from `~/ansible-island-adventure`.
+Run commands from the root of your public review clone. The [field guide](../workshop/field-guide.md) covers setup, controller and EDA. The [challenge cards](../workshop/challenges.md) give each objective and the command to test it.
 
-## Coastal field station
+## Managed nodes
 
-Start the station in a dedicated terminal. It prints its loopback URL when it is ready and reads your edited station data on each request.
+`fieldkit/run-managed` runs the named playbook from `~/lab_inventory` with the seat’s inventory and SSH settings. For example, `fieldkit/run-managed station.yml --limit node01` publishes the field station. Local container exercises use rootless Podman on the VS Code host.
 
-```bash
-cd ~/ansible-island-adventure
-python3 fieldkit/coast.py
-```
+## Radio receiver
 
-Leave that terminal running. In your working terminal, read the assigned address from the clone and request the greeting.
+For Morse and bottle reports, open a second terminal and leave this command running while you work.
 
 ```bash
-cd ~/ansible-island-adventure
-COAST=$(cat .coast-url)
-curl -fsS "$COAST/"
-```
-
-Use `$COAST` in that terminal for later chart requests. Stop the station with **Ctrl+C** in its own terminal when you finish.
-
-### Receive a signal
-
-The Morse and bottle challenges also use a receiver. Start it in another terminal and wait for it to print its loopback URL.
-
-```bash
-cd ~/ansible-island-adventure
+cd ~/island-review
 python3 fieldkit/receiver.py
 ```
 
-In your working terminal, implement the function named in the challenge in `fieldkit/decoders.py`. The receiver reloads it on each request. Run `python3 fieldkit/replay.py morse` or `python3 fieldkit/replay.py bottles` to send a recorded transmission. Stop the receiver with **Ctrl+C** in its own terminal when you finish.
+The receiver prints its loopback address. The signal playbook reads that address from the clone. A correct POST returns the acknowledged message. HTTP 422 means the translation or coordinate order needs another look. Stop the receiver with Ctrl+C when both cards are complete.
+
+## Offline collection
+
+The kit includes the unmodified Galaxy release of `containers.podman` 1.16.3, licensed under GPL-3.0-or-later. Its COPYING file and source are inside the archive. SHA-256 is `2f48a06782619fa7eb9b76b2bfadd90fca7bad254dc2ee7ccf3ac8e870ae29d7`. [Upstream release](https://galaxy.ansible.com/ui/repo/published/containers/podman/)

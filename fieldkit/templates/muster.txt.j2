@@ -1,0 +1,3 @@
+{% for member in groups['web'] | sort %}
+{{ member }}|{{ 'web' if member in groups['web'] else 'db' }}|{{ hostvars[member].ansible_facts.distribution }}|{{ hostvars[member].ansible_facts.distribution_major_version }}
+{% endfor %}

@@ -1,0 +1,13 @@
+---
+- name: Count the field station's connected peers
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Read the survey from the web station
+      ansible.builtin.uri:
+        url: http://node01/island-review/chart.json
+        return_content: true
+      register: survey
+    - name: Report the connected peers
+      ansible.builtin.debug:
+        msg: "{{ survey.json.peers | length }}"

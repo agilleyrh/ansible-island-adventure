@@ -10,5 +10,6 @@
     - name: Dispatch the harbor launch
       condition: event.payload.zone == "harbor" and event.payload.wind >= 40
       action:
-        debug:
-          msg: "Dispatch {{ event.payload.station }}-{{ event.payload.sequence }}"
+        run_job_template:
+          name: "{{ dispatch_template }}"
+          organization: Workshop

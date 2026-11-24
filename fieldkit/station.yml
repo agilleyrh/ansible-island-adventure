@@ -1,0 +1,9 @@
+---
+- name: Publish the island field station
+  hosts: web
+  become: true
+  gather_facts: false
+  vars_files:
+    - data/station.json
+  roles:
+    - station

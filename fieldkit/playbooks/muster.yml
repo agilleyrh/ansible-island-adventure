@@ -1,0 +1,27 @@
+---
+- name: Gather the crew's RHEL facts
+  hosts: web:db
+  tags: facts
+  gather_facts: true
+  tasks:
+    - name: Confirm the crew runs Red Hat Enterprise Linux
+      ansible.builtin.assert:
+        that: ansible_facts.distribution == 'RedHat'
+    - name: Report the platform signature
+      ansible.builtin.debug:
+        msg: "{{ ansible_facts.distribution }}/{{ ansible_facts.distribution_major_version }}"
+- name: Publish the muster on the records host
+  hosts: db
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Create the records directory
+      ansible.builtin.file:
+        path: /var/tmp/island-review
+        state: directory
+        mode: "0755"
+    - name: Render the crew manifest
+      ansible.builtin.template:
+        src: ../templates/muster.txt.j2
+        dest: /var/tmp/island-review/muster.txt
+        mode: "0644"

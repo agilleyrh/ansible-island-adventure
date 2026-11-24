@@ -1,0 +1,28 @@
+---
+- name: Send three storm observations
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: stream_url
+      prompt: Paste the HTTPS event stream URL with your public AAP hostname
+      private: false
+    - name: stream_token
+      prompt: Enter the X-Island-Token value
+      private: true
+  tasks:
+    - name: Send each report with the event stream credential
+      ansible.builtin.uri:
+        url: "{{ stream_url }}"
+        method: POST
+        headers:
+          X-Island-Token: "{{ stream_token }}"
+        body_format: json
+        body: "{{ lookup('ansible.builtin.file', playbook_dir + '/../data/storm-' + item + '.json') | from_json }}"
+        status_code: [200, 201, 202, 204]
+        follow_redirects: none
+      no_log: true
+      loop: [quiet, offshore, alert]
+    - name: Confirm delivery
+      ansible.builtin.debug:
+        msg: All three reports were accepted.

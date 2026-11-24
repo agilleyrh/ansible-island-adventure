@@ -1,0 +1,9 @@
+---
+- name: Converge the desired HTTP replicas
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    image: "{{ supported_image }}"
+    entrypoint: python3
+    command: "-m http.server 8080"
+    state: "{{ beacon_state }}"
+  loop: "{{ replicas }}"

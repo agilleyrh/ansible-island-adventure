@@ -1,0 +1,13 @@
+---
+- name: Verify the greetings served by the web hosts
+  hosts: web
+  gather_facts: false
+  tasks:
+    - name: Read the selected station message
+      ansible.builtin.uri:
+        url: "http://127.0.0.1/island-review/{{ message_name }}.txt"
+        return_content: true
+      register: page
+    - name: Show the live response
+      ansible.builtin.debug:
+        msg: "{{ page.content | trim }}"

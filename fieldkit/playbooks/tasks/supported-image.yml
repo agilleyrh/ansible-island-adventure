@@ -1,0 +1,7 @@
+---
+- name: Inspect images on the VS Code host
+  containers.podman.podman_image_info:
+  register: local_images
+- name: Select the seat's supported execution environment
+  ansible.builtin.set_fact:
+    supported_image: "{{ local_images.images | selectattr('RepoTags', 'defined') | map(attribute='RepoTags') | reject('none') | flatten | select('search', '/ee-supported[^:]*:') | list | first }}"

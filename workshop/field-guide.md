@@ -1,39 +1,26 @@
-# Island Adventure field guide
+# Ansible Island Adventure review field guide
 
-On the game site, select **Register**, enter the registration code from your facilitator and choose your own password. Sign in to submit answers and start with the four warm-ups on the **Challenges** page.
+Register on the **review board** using its registration code and choose your own password. Start with the warm-ups. Use the **VS Code** and **AAP** tabs in your assigned Showroom. Module 2.1 supplies your seat’s AAP login.
 
-Open your assigned Showroom and select **VS Code**. The lab provides a terminal, three managed hosts and Ansible Automation Platform (AAP). Your AAP login is in Showroom module **2.1 Introduction to Ansible Automation Platform**.
-
-## Get the field kit
-
-Run these commands in the VS Code terminal.
+## Clone the review branch
 
 ```bash
 cd ~
-git clone https://github.com/agilleyrh/ansible-island-adventure.git
-cd ansible-island-adventure
-ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false
+git clone --branch codex/ansible-first-review --single-branch https://github.com/agilleyrh/ansible-island-adventure.git island-review
+cd island-review
 ```
 
-The clone includes the playbooks, roles, training Vault keys, rulebooks and challenge data. Start each terminal challenge in `~/ansible-island-adventure`. For the two playbooks that connect to managed nodes, the challenge commands run Ansible from `~/lab_inventory`. Ansible loads the lab’s SSH settings there automatically.
-
-To see which hosts belong to each inventory group, run `ansible-inventory -i ~/lab_inventory/hosts --graph`.
+Start each card at `~/island-review`. Your local edits apply to CLI exercises. The supplied `fieldkit/run-managed` helper changes into `~/lab_inventory` and runs Ansible with the seat’s inventory and SSH settings. Local playbooks run directly in VS Code. In the **Equip the container crew** warm-up, install the included Podman collection once. Use one Showroom seat per participant or working pair.
 
 ## Controller project
 
-1. In **Automation Execution → Projects**, create a project named `Island Adventure` in the **Workshop** organization.
-2. Choose source control type **Git**, enter `https://github.com/agilleyrh/ansible-island-adventure.git` as the URL and `main` as the branch. Leave **Source Control Credential** empty.
-3. Save the project and wait for its sync to succeed. When you create job templates, select **Workshop Inventory**. For jobs that connect to a managed node, also select the existing **Workshop Credential**. The sealed-dispatch challenge explains how to create a Vault credential for encrypted training files.
-
-## Coastal field station
-
-Start the HTTP service when a challenge first mentions `COAST`. It listens on your seat’s loopback interface. Commands to start the station and its receiver are in the [field kit instructions](https://github.com/agilleyrh/ansible-island-adventure/blob/main/fieldkit/README.md#coastal-field-station).
+1. Under **Automation Execution → Projects**, create **Island Review** in **Workshop**. Choose **Git**, URL `https://github.com/agilleyrh/ansible-island-adventure.git`, branch `codex/ansible-first-review`. Leave **Source Control Credential** empty. Save and wait for a successful sync.
+2. Create the job templates each card names. Select **Workshop Inventory**. Jobs that connect to managed nodes also use the existing **Workshop Credential** (Machine). Add the training Vault credential where the card calls for it.
 
 ## Event-Driven Ansible
 
-1. In **Automation Decisions → Projects**, create a project named `Island Adventure EDA` in **Workshop**. Enter `https://github.com/agilleyrh/ansible-island-adventure.git` as the Git URL and `main` as the branch. Leave the source control credential empty and keep TLS verification enabled. Wait for the import to complete.
-2. Under **Automation Decisions → Rulebook Activations**, create `Island Tides`. Select **Workshop**, your EDA project, `tide-watch.yml` and **Default Decision Environment**. Choose restart policy **Never**. The rulebook writes to Rule Audit, so leave the optional AAP credential empty.
-3. Enter these **Variables** as YAML, save with the activation enabled and wait for it to finish. Open the activation’s instance output or filter **Rule Audit** by its name.
+1. In **Automation Decisions → Projects**, create **Island Review EDA** in **Workshop**. Use the same public Git URL and review branch as the controller project, leave the Git credential empty and keep TLS verification enabled. Wait for a successful import.
+2. Under **Automation Decisions → Rulebook Activations**, create **Island Review Tides** with your EDA project, `tide-watch.yml`, **Workshop**, **Default Decision Environment** and restart policy **Never**. Leave the optional AAP credential empty for the tide exercise. Set the following **Variables**. Save with the activation enabled, then inspect the instance output or Rule Audit after it completes.
 
 ```yaml
 lower_tide: 3
@@ -42,20 +29,11 @@ upper_tide: 6
 
 ## Send an authenticated storm report
 
-1. In your VS Code terminal, generate a unique event token with `openssl rand -hex 24`. In **Automation Decisions → Infrastructure → Credentials**, create a **Token Event Stream** credential in **Workshop**. Enter the generated value as the token and set the HTTP header key to `X-Island-Token`. Name the credential `Island Storm Token`.
-2. Open **Automation Decisions → Event Streams**, create a stream in **Workshop**, and name it `Island Storm Reports` and select your token credential. Leave test mode off so the stream delivers events. Copy the stream's generated URL. On this Showroom image the generated hostname is often `aap.example.org`. Replace that hostname with the hostname from your own **AAP** tab. Keep the full stream path, UUID and trailing slash, and use HTTPS.
-3. Create an activation named `Island Storm Relay` using the same organization and EDA project. Select `storm-relay.yml`. In **Source mappings** (or **Event streams**), enable the mapping and select your stream for the named source `station_reports`. Use **Default Decision Environment**, restart policy **Never**, and leave the variables empty. Save, enable and wait for **Running**.
-4. In the VS Code terminal, run the commands below from the repository root. Paste your own URL and token at the prompts. Each request should return a successful HTTP status. The stream should receive three events and the rule should fire once.
+1. In **Automation Execution → Templates**, create a job template named exactly **Island Review Dispatch** using **Island Review**, **Workshop Inventory**, **Workshop Credential** and `fieldkit/playbooks/storm-dispatch.yml`. Enable **Prompt on launch** for **Variables** so the matching event reaches the job. Enable **Privilege Escalation**. Save it.
+2. In **Automation Decisions → Infrastructure → Credentials**, create a **Red Hat Ansible Automation Platform** credential in **Workshop**. Name it **Island Review Launch**. For **Host**, use the HTTPS address from your AAP tab followed by `/api/controller`. Enter your Showroom AAP username and password and enable TLS verification. This credential allows the activation to launch the template in your seat.
+3. In VS Code, generate a token with `openssl rand -hex 24`. In EDA Credentials, create **Island Review Token** of type **Token Event Stream** in **Workshop**. Set **HTTP header key** to `X-Island-Token` and enter the generated token. Save it.
+4. Under **Automation Decisions → Event Streams**, create **Island Review Reports** with your token credential. Leave test mode off. Copy the generated URL. If its hostname is `aap.example.org`, replace only that hostname with the public hostname from your AAP tab. Retain the full path and trailing slash.
+5. Create **Island Review Storm** with your EDA project, `storm-relay.yml`, **Workshop**, **Default Decision Environment**, restart **Never**, and the **Island Review Launch** AAP credential. Map the named source `station_reports` to **Island Review Reports**. In **Variables**, set `dispatch_template: Island Review Dispatch`. Save, enable and wait for **Running**.
+6. At the root of your clone run `ansible-playbook fieldkit/playbooks/send-reports.yml`. Paste the corrected stream URL and your token when prompted. This sends the quiet, offshore and harbor reports once each. Open **Rule Audit** and **Automation Execution → Jobs**. Inspect the matching event and the linked dispatch job. Read the receipt on node03 as directed on the card. Disable the storm activation when you finish.
 
-```bash
-read -r -p 'Event stream URL: ' ISLAND_STREAM
-read -rs -p 'Event token: ' ISLAND_TOKEN; echo
-for report in quiet offshore alert; do
-  curl --fail-with-body -sS -o /dev/null -w "$report %{http_code}\n" \
-    -H "X-Island-Token: $ISLAND_TOKEN" -H 'Content-Type: application/json' \
-    --data-binary "@fieldkit/data/storm-$report.json" "$ISLAND_STREAM"
-done
-unset ISLAND_TOKEN
-```
-
-5. Open the matching Rule Audit entry and its associated event. The JSON you sent appears under `payload`. Disable your storm activation when you finish.
+The [optional bonus puzzles](https://github.com/agilleyrh/ansible-island-adventure/blob/codex/ansible-first-review/workshop/bonuses.md) are available throughout the expedition.

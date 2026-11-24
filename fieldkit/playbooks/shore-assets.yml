@@ -1,0 +1,34 @@
+---
+- name: Publish an asset selected from the expedition catalog
+  hosts: node01
+  become: true
+  gather_facts: false
+  vars:
+    catalog: "{{ (lookup('ansible.builtin.file', playbook_dir + '/../data/shore.json') | from_json)['items'] }}"
+  tasks:
+    - name: Select the requested runtime
+      ansible.builtin.set_fact:
+        asset: "{{ catalog | selectattr('kind', 'equalto', 'Template') | map(attribute='metadata.name') | first }}"
+        filename: runtime
+      tags: runtime
+    - name: Extract the treasure map
+      ansible.builtin.set_fact:
+        asset: "{{ (catalog | selectattr('metadata.name', 'equalto', 'treasure-map') | first).data.map }}"
+        filename: map
+      tags: map
+    - name: Publish the selected value
+      ansible.builtin.copy:
+        dest: "/var/www/html/island-review/{{ filename }}.txt"
+        content: "{{ asset }}\n"
+        mode: "0644"
+      tags: always
+    - name: Retrieve the published asset
+      ansible.builtin.uri:
+        url: "http://127.0.0.1/island-review/{{ filename }}.txt"
+        return_content: true
+      register: response
+      tags: always
+    - name: Read the published label
+      ansible.builtin.debug:
+        msg: "{{ response.content | trim }}"
+      tags: always

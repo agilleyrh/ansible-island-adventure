@@ -1,18 +1,15 @@
-# Ansible Island Adventure
+# Ansible Island Adventure review
 
-Use Ansible to recover a sealed dispatch, bring a shore beacon online and respond to a storm alert. The 40 challenges use the VS Code terminal, three RHEL hosts, automation controller and Event-Driven Ansible in your assigned Showroom lab. Submit answers on the game site your facilitator shares with you.
+This edition has 40 scored cards. Thirty-seven use Ansible or Ansible Automation Platform. Three short game activities give your crew a chance to meet and solve an island word puzzle. The original SQL and route-math puzzles are [optional bonuses](workshop/bonuses.md).
 
-## Start in VS Code
+In your assigned Showroom VS Code terminal:
 
 ```bash
 cd ~
-git clone https://github.com/agilleyrh/ansible-island-adventure.git
-cd ansible-island-adventure
-ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false
+git clone --branch codex/ansible-first-review --single-branch https://github.com/agilleyrh/ansible-island-adventure.git island-review
+cd island-review
 ```
 
-Open the [field guide](workshop/field-guide.md) for inventory, controller project and EDA setup. Start the four warm-ups on the game’s Challenges page. You can also read the [challenge instructions](workshop/challenges.md) in your clone.
+Follow the [field guide](workshop/field-guide.md) and submit answers on the **review board** supplied by your facilitator. The [cards](workshop/challenges.md) use VS Code, three RHEL hosts, rootless Podman, automation controller and Event-Driven Ansible. Your edits stay in your own clone. Controller and EDA sync the published review branch.
 
-The [field kit](fieldkit/) contains the playbooks, roles, training Vault keys, data and local services. The [rulebooks](rulebooks/) are ready to import into your seat’s EDA project.
-
-Adapted from the AnsibleCTF Island Adventure created by Joon Paik and Red Hat contributors.
+Adapted from AnsibleCTF Island Adventure by Joon Paik and Red Hat contributors.

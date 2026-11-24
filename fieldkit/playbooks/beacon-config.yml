@@ -5,7 +5,7 @@
   vars:
     station: harbor
     channels: [7, 3, 7, 5]
-    beacon_label: "{{ island_seat | default('workshop') }}"
+    beacon_label: "{{ island_seat | default('review') }}"
     beacon_file: "/tmp/island-{{ beacon_label }}-beacon.conf"
   tasks:
     - name: Check the seat label

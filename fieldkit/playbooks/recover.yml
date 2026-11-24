@@ -1,0 +1,45 @@
+---
+- name: Recover a rejected practice release
+  hosts: node02
+  become: true
+  gather_facts: false
+  vars:
+    practice_file: /var/www/html/island-review/rollback-drill.txt
+    practice_url: http://127.0.0.1/island-review/rollback-drill.txt
+  tasks:
+    - name: Read the known-good release
+      ansible.builtin.slurp:
+        src: /var/www/html/island-review/release.txt
+      register: good
+    - name: Try the candidate on the isolated practice page
+      block:
+        - name: Install the test candidate
+          ansible.builtin.copy:
+            dest: "{{ practice_file }}"
+            content: "test=amber\n"
+            mode: "0644"
+        - name: Probe the candidate
+          ansible.builtin.uri:
+            url: "{{ practice_url }}"
+            return_content: true
+          register: candidate
+        - name: Accept only the approved release
+          ansible.builtin.assert:
+            that: candidate.content == good.content | b64decode
+      rescue:
+        - name: Restore the previously verified content
+          ansible.builtin.copy:
+            dest: "{{ practice_file }}"
+            content: "{{ good.content }}"
+            mode: "0644"
+    - name: Read the recovered page
+      ansible.builtin.uri:
+        url: "{{ practice_url }}"
+        return_content: true
+      register: result
+    - name: Confirm a byte-for-byte recovery
+      ansible.builtin.assert:
+        that: result.content == good.content | b64decode
+    - name: Report the recovered marker
+      ansible.builtin.debug:
+        msg: "restored/{{ result.content | trim }}"

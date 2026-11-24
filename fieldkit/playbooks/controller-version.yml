@@ -1,0 +1,18 @@
+---
+- name: Discover the automation controller version
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: gateway
+      prompt: Paste the HTTPS base URL from your Showroom AAP tab
+      private: false
+  tasks:
+    - name: Read the controller ping endpoint
+      ansible.builtin.uri:
+        url: "{{ gateway | regex_replace('/+$', '') }}/api/controller/v2/ping/"
+        return_content: true
+      register: controller_ping
+    - name: Print the version returned by the gateway
+      ansible.builtin.debug:
+        msg: "{{ controller_ping.json.version }}"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if (( $# == 0 )); then
+  echo "Usage: fieldkit/run-managed PLAYBOOK [ansible-playbook options]" >&2
+  exit 2
+fi
+kit=$(cd "$(dirname "$0")" && pwd)
+playbook=$1
+shift
+cd "$HOME/lab_inventory"
+exec ansible-playbook -i hosts "$kit/$playbook" "$@"

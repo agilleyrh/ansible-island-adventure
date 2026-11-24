@@ -1,0 +1,42 @@
+---
+- name: Receive and acknowledge the recorded rescue signals
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    receiver: "{{ lookup('ansible.builtin.file', playbook_dir + '/../../.receiver-url') }}"
+    alphabet: "{{ lookup('ansible.builtin.file', playbook_dir + '/../data/morse.json') | from_json }}"
+    letters: "{{ dict(alphabet.values() | zip(alphabet.keys())) }}"
+  tasks:
+    - name: Fetch the live station survey
+      ansible.builtin.uri:
+        url: http://node01/island-review/chart.json
+        return_content: true
+      register: report
+      tags: always
+
+    - name: Assemble the Morse message
+      ansible.builtin.set_fact:
+        message: "{{ report.json.morse }}"
+      tags: morse
+
+    - name: Read the bottles in chart order
+      ansible.builtin.set_fact:
+        message: "{{ report.json.bottles | map(attribute='character') | join }}"
+      tags: bottles
+
+    - name: Send the assembled message to the receiver
+      ansible.builtin.uri:
+        url: "{{ receiver }}/ack/{{ signal }}"
+        method: POST
+        body_format: json
+        body:
+          message: "{{ message }}"
+        return_content: true
+      register: acknowledgement
+      tags: always
+
+    - name: Print the acknowledged message
+      ansible.builtin.debug:
+        msg: "{{ acknowledgement.json.received }}"
+      tags: always
