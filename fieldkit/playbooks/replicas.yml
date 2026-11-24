@@ -1,6 +1,7 @@
 ---
 - name: Diagnose and repair the harbor beacons
   hosts: localhost
+  become: false
   connection: local
   gather_facts: false
   vars:

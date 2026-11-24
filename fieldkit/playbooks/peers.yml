@@ -1,6 +1,7 @@
 ---
 - name: Count the field station's connected peers
   hosts: localhost
+  become: false
   gather_facts: false
   tasks:
     - name: Read the survey from the web station

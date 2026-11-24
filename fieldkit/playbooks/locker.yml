@@ -1,6 +1,7 @@
 ---
 - name: Recover cargo from a persistent Podman volume
   hosts: localhost
+  become: false
   connection: local
   gather_facts: false
   vars:

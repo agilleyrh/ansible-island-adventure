@@ -1,6 +1,7 @@
 ---
 - name: Receive and acknowledge the recorded rescue signals
   hosts: localhost
+  become: false
   connection: local
   gather_facts: false
   vars:

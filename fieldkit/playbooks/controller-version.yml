@@ -1,6 +1,7 @@
 ---
 - name: Discover the automation controller version
   hosts: localhost
+  become: false
   connection: local
   gather_facts: false
   vars_prompt:
