@@ -1,6 +1,8 @@
 # Island Adventure field guide
 
-Open your assigned Showroom and select **VS Code**. The lab provides a terminal, three managed hosts and Ansible Automation Platform (AAP). Your AAP login is in Showroom module **2.1 Introduction to Ansible Automation Platform**. Use your game account to submit answers. Start with the four warm-ups on the **Challenges** page.
+On the game site, select **Register**, enter the registration code from your facilitator and choose your own password. Sign in to submit answers and start with the four warm-ups on the **Challenges** page.
+
+Open your assigned Showroom and select **VS Code**. The lab provides a terminal, three managed hosts and Ansible Automation Platform (AAP). Your AAP login is in Showroom module **2.1 Introduction to Ansible Automation Platform**.
 
 ## Get the field kit
 
