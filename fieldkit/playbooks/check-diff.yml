@@ -1,0 +1,11 @@
+---
+- name: Compare the two fruit baskets
+  hosts: localhost
+  gather_facts: false
+  vars:
+    basket_a: [10, 0, 21, 40, 70]
+    basket_b: [22, 10, 40, 60]
+  tasks:
+    - name: List the fruit labels
+      ansible.builtin.debug:
+        msg: "{{ basket_a }}"

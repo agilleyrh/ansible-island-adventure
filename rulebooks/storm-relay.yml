@@ -1,0 +1,14 @@
+---
+- name: Route storm observations
+  hosts: all
+  sources:
+    - name: station_reports
+      ansible.eda.webhook:
+        host: 127.0.0.1
+        port: 5000
+  rules:
+    - name: Dispatch the harbor launch
+      condition: event.payload.zone == "harbor" and event.payload.wind >= 40
+      action:
+        debug:
+          msg: "Dispatch {{ event.payload.station }}-{{ event.payload.sequence }}"

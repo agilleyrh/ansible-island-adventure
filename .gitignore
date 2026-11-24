@@ -1,0 +1,10 @@
+.DS_Store
+.ansible/
+__pycache__/
+*.retry
+*.log
+*.artifact.json
+.coast-url
+.coast-log
+.receiver-url
+.receiver-log

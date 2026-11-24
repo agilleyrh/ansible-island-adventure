@@ -1,0 +1,10 @@
+---
+- name: Filter the spring water
+  hosts: localhost
+  gather_facts: false
+  vars:
+    sample: QW5zaWJsZSBpcyBhd2Vzb21lIQ==
+  tasks:
+    - name: Examine the sample
+      ansible.builtin.debug:
+        msg: "{{ sample }}"

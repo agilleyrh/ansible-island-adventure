@@ -1,0 +1,12 @@
+---
+orders:
+  - {cargo: water, crates: 8}
+  - {cargo: rice, crates: 6}
+  - {cargo: blankets, crates: 5}
+deliveries:
+  - {cargo: rice, crates: 2, inspection: released}
+  - {cargo: water, crates: 5, inspection: released}
+  - {cargo: blankets, crates: 5, inspection: released}
+  - {cargo: rice, crates: 4, inspection: hold}
+  - {cargo: rice, crates: 1, inspection: released}
+  - {cargo: water, crates: 1, inspection: released}

@@ -1,0 +1,11 @@
+---
+- name: Reconcile relief shipments
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ../data/relief.yml
+  tasks:
+    - name: Report remaining orders
+      ansible.builtin.debug:
+        msg: "{{ item.cargo }}={{ item.crates }}"
+      loop: "{{ orders | sort(attribute='cargo') }}"

@@ -1,0 +1,8 @@
+---
+- name: Send a greeting from the beach
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Read the beach sign
+      ansible.builtin.debug:
+        msg: "The Hello World challenge word is {{ ['Red', 'Hat'] | join }}"

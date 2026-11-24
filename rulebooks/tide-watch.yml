@@ -1,0 +1,14 @@
+---
+- name: Listen for safe crossings
+  hosts: all
+  sources:
+    - name: tide_samples
+      ansible.eda.range:
+        limit: 9
+        delay: 1
+  rules:
+    - name: Record a navigable tide
+      condition: event.i >= vars.lower_tide and event.i < vars.upper_tide
+      action:
+        debug:
+          msg: "Crossing sample {{ event.i }}"

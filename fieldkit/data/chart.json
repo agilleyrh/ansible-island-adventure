@@ -1,0 +1,190 @@
+{
+  "morse": "-.-. --- -. - .- .. -. . .-. ...",
+  "bottles": [
+    {
+      "character": "G",
+      "coordinates": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "character": "G",
+      "coordinates": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "character": "A",
+      "coordinates": {
+        "x": 1,
+        "y": 0
+      }
+    },
+    {
+      "character": "A",
+      "coordinates": {
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "character": "A",
+      "coordinates": {
+        "x": 2,
+        "y": 1
+      }
+    },
+    {
+      "character": "P",
+      "coordinates": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    {
+      "character": "L",
+      "coordinates": {
+        "x": 2,
+        "y": 0
+      }
+    },
+    {
+      "character": "O",
+      "coordinates": {
+        "x": 1,
+        "y": 2
+      }
+    },
+    {
+      "character": "S",
+      "coordinates": {
+        "x": 2,
+        "y": 2
+      }
+    }
+  ],
+  "peers": [
+    {
+      "name": "buoy-01",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-02",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-03",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-04",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-05",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-06",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-07",
+      "state": "offline"
+    },
+    {
+      "name": "buoy-08",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-09",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-10",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-11",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-12",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-13",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-14",
+      "state": "offline"
+    },
+    {
+      "name": "buoy-15",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-16",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-17",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-18",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-19",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-20",
+      "state": "connected"
+    },
+    {
+      "name": "buoy-21",
+      "state": "offline"
+    },
+    {
+      "name": "buoy-22",
+      "state": "connected"
+    }
+  ],
+  "islands": [
+    [
+      0,
+      0
+    ],
+    [
+      320,
+      493
+    ],
+    [
+      118,
+      890
+    ],
+    [
+      645,
+      374
+    ],
+    [
+      590,
+      121
+    ],
+    [
+      980,
+      655
+    ]
+  ],
+  "tiles": [
+    "O",
+    "T",
+    "B",
+    "A"
+  ]
+}

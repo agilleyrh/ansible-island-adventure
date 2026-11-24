@@ -1,0 +1,8 @@
+---
+- name: Read the controller beacon
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Reveal the initials on the beacon
+      ansible.builtin.debug:
+        msg: "Beacon initials = {{ ['automation', 'at', 'port'] | map('first') | join | upper }}"

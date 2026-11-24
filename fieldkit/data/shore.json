@@ -1,0 +1,9 @@
+{
+  "kind": "List",
+  "items": [
+    {"kind": "ConfigMap", "metadata": {"name": "tide-table"}, "data": {"tide": "falling"}},
+    {"kind": "ConfigMap", "metadata": {"name": "treasure-map"}, "data": {"map": "eC1tYXJrcy10aGUtc3BvdA=="}},
+    {"kind": "Deployment", "metadata": {"name": "beacon"}, "spec": {"replicas": 3}, "status": {"readyReplicas": 2, "availableReplicas": 2}},
+    {"kind": "Template", "metadata": {"name": "native-java"}, "annotations": {"runtime": "Quarkus"}}
+  ]
+}

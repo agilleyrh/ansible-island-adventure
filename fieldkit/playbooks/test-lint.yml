@@ -1,0 +1,8 @@
+---
+- name: Read the ship's log
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Print the entry
+      debug:
+        msg: The log is shipshape.

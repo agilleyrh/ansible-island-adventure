@@ -1,0 +1,29 @@
+---
+- name: Stage a navigation beacon on the second web node
+  hosts: node02
+  gather_facts: false
+  vars:
+    station: harbor
+    channels: [7, 3, 7, 5]
+    beacon_label: "{{ island_seat | default('workshop') }}"
+    beacon_file: "/tmp/island-{{ beacon_label }}-beacon.conf"
+  tasks:
+    - name: Check the seat label
+      ansible.builtin.assert:
+        that:
+          - beacon_label is match('^[a-z0-9][a-z0-9-]{0,24}$')
+    - name: Render the radio configuration
+      ansible.builtin.template:
+        src: ../templates/beacon.conf.j2
+        dest: "{{ beacon_file }}"
+        mode: "0600"
+    - name: Calculate the installed fingerprint
+      ansible.builtin.stat:
+        path: "{{ beacon_file }}"
+        checksum_algorithm: sha256
+      register: installed
+      when: not ansible_check_mode
+    - name: Show the installed fingerprint
+      ansible.builtin.debug:
+        msg: "{{ installed.stat.checksum[:12] }}"
+      when: not ansible_check_mode

@@ -1,0 +1,13 @@
+---
+- name: Receive the rescue plan
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Confirm that the planner sent the launch and the party size
+      ansible.builtin.assert:
+        that:
+          - rescue_boat is defined
+          - rescue_party is defined
+    - name: Issue the sailing ticket
+      ansible.builtin.debug:
+        msg: "Sailing ticket = {{ rescue_boat | upper }}-{{ rescue_party }}"

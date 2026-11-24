@@ -1,0 +1,15 @@
+---
+- name: Plan a rescue launch
+  hosts: localhost
+  gather_facts: false
+  vars:
+    launches:
+      - {name: tern, seats: 4, ready: true}
+      - {name: gull, seats: 8, ready: false}
+      - {name: petrel, seats: 6, ready: true}
+  tasks:
+    - name: Choose the smallest ready launch that fits the party
+      ansible.builtin.set_stats:
+        data:
+          rescue_boat: "{{ (launches | selectattr('ready') | selectattr('seats', 'ge', party_size | int) | sort(attribute='seats') | first).name }}"
+          rescue_party: "{{ party_size | int }}"
