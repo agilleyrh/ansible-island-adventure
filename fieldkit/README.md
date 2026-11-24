@@ -1,6 +1,6 @@
-# Island review field kit
+# Island Adventure field kit
 
-Run commands from the root of your public review clone. The [field guide](../workshop/field-guide.md) covers setup, controller and EDA. The [challenge cards](../workshop/challenges.md) give each objective and the command to test it.
+Run commands from the root of your workshop clone. The [field guide](../workshop/field-guide.md) covers setup, controller and EDA. The [challenge cards](../workshop/challenges.md) give each objective and the command to test it.
 
 ## Managed nodes
 
@@ -11,7 +11,7 @@ Run commands from the root of your public review clone. The [field guide](../wor
 For Morse and bottle reports, open a second terminal and leave this command running while you work.
 
 ```bash
-cd ~/island-review
+cd ~/ansible-island-adventure
 python3 fieldkit/receiver.py
 ```
 

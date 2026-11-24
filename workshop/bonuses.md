@@ -1,6 +1,6 @@
 # Optional island puzzles
 
-These four puzzles are unscored. Run them from your review clone whenever you like.
+These four puzzles are unscored. Run them from your workshop clone whenever you like.
 
 ## Top explorer
 

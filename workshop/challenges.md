@@ -1,6 +1,6 @@
-# Island Adventure review challenges
+# Island Adventure challenges
 
-Run commands from `~/island-review`. Submit each answer on the review board.
+Run commands from `~/ansible-island-adventure`. Submit each answer on the workshop board.
 
 ## 1 | 10 | Warm-up | - | Write your name in the sand
 
@@ -16,7 +16,7 @@ Open the installed module help with `ansible-doc ansible.builtin.uri`. Find the 
 
 ## 24 | 10 | Warm-up | - | Equip the container crew
 
-From `~/island-review`, install the bundled collection alongside the playbooks. Run `ansible-galaxy collection install --offline -p fieldkit/playbooks/collections fieldkit/vendor/containers-podman-1.16.3.tar.gz`, then `ansible-galaxy collection list -p fieldkit/playbooks/collections containers.podman`. Submit the installed version number. The warning about the default search path is expected because these playbooks use their adjacent `collections` directory.
+From `~/ansible-island-adventure`, install the bundled collection alongside the playbooks. Run `ansible-galaxy collection install --offline -p fieldkit/playbooks/collections fieldkit/vendor/containers-podman-1.16.3.tar.gz`, then `ansible-galaxy collection list -p fieldkit/playbooks/collections containers.podman`. Submit the installed version number. The warning about the default search path is expected because these playbooks use their adjacent `collections` directory.
 
 ## 3 | 10 | At the beach | 17 | Check in from the beach
 
@@ -28,7 +28,7 @@ Run `ansible-playbook fieldkit/playbooks/controller-version.yml` from VS Code. A
 
 ## 25 | 10 | At the beach | 3 | Hello, world!
 
-Run `ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false` from your review clone. Submit the single word at the end of the greeting.
+Run `ansible-navigator run fieldkit/playbooks/hello-world.yml -m stdout --ee false` from your workshop clone. Submit the single word at the end of the greeting.
 
 ## 26 | 20 | At the beach | 25 | Message in a bottle
 
@@ -48,7 +48,7 @@ Run `fieldkit/playbooks/filter-water.yml` with Navigator in stdout mode and with
 
 ## 34 | 30 | At the beach | 26 | Open the shore chest
 
-Read the treasure role and deploy its encrypted page to node01. From your clone run `fieldkit/run-managed treasure-site.yml --vault-password-file ~/island-review/fieldkit/training/treasure-key.txt`. The role reads the installed page over HTTP. Submit its text.
+Read the treasure role and deploy its encrypted page to node01. From your clone run `fieldkit/run-managed treasure-site.yml --vault-password-file ~/ansible-island-adventure/fieldkit/training/treasure-key.txt`. The role reads the installed page over HTTP. Submit its text.
 
 ## 35 | 10 | At the beach | 3,24 | Inspect the execution image
 
@@ -84,7 +84,7 @@ Inspect `fieldkit/data/station.json`. Edit the station role’s `templates/bonjo
 
 ## 6 | 30 | Coastal field station | 101 | Morse coding
 
-Start the supplied radio receiver in a second terminal with `cd ~/island-review && python3 fieldkit/receiver.py`. Leave it running for both signal exercises. In `fieldkit/playbooks/signals.yml`, edit **Assemble the Morse message**. Split the recorded signal into codes, look up each code in the supplied `letters` dictionary, and join the results. Run `ansible-playbook fieldkit/playbooks/signals.yml --tags morse -e signal=morse`. The play fetches the live station report and POSTs your translation. Submit the acknowledged word. Hint: Ansible’s `extract` filter can look up a list of keys.
+Start the supplied radio receiver in a second terminal with `cd ~/ansible-island-adventure && python3 fieldkit/receiver.py`. Leave it running for both signal exercises. In `fieldkit/playbooks/signals.yml`, edit **Assemble the Morse message**. Split the recorded signal into codes, look up each code in the supplied `letters` dictionary, and join the results. Run `ansible-playbook fieldkit/playbooks/signals.yml --tags morse -e signal=morse`. The play fetches the live station report and POSTs your translation. Submit the acknowledged word. Hint: Ansible’s `extract` filter can look up a list of keys.
 
 ## 7 | 30 | Coastal field station | 101 | Bottles on the grid
 
@@ -153,7 +153,7 @@ Preview the change on **node02**, apply it, then apply it again to check idempot
 ```bash
 (
   cd ~/lab_inventory || exit
-  playbook=~/island-review/fieldkit/playbooks/beacon-config.yml
+  playbook=~/ansible-island-adventure/fieldkit/playbooks/beacon-config.yml
   ansible-playbook -i hosts "$playbook" --check --diff &&
     ansible-playbook -i hosts "$playbook" &&
     ansible-playbook -i hosts "$playbook"
